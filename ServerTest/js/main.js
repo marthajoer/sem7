@@ -12,7 +12,7 @@ var osm = L.tileLayer(
 var riskByg = new L.geoJson(null, {
 	style: function (feature) {
 		return {
-			color: '#9a9afc',
+			color: 'green',
 			weight: 2,
 			opacity: 1
 		};
@@ -34,16 +34,20 @@ $.getJSON("php/getBygData.php", function (data) {
   riskByg.addData(data);
 });
 
+var geojsonMarkerOptions = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
 //henter adgangsaddrese punkter
-bikeRacks = new L.geoJson(null, {
-	style: function (feature) {
-		return {
-      radius: '2',
-			color: 'red',
-			weight: 2,
-			opacity: 1
-		};
-	},
+enheds = new L.geoJson(null, {
+    pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+},
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
       var content = '<table border="1" style="border-collapse:collapse;" cellpadding="2">' +
@@ -58,7 +62,7 @@ bikeRacks = new L.geoJson(null, {
 });
 
 $.getJSON("php/getPointData.php", function (data) {
-  riskByg.addData(data);
+  enheds.addData(data);
 });
 
 
@@ -66,5 +70,5 @@ $.getJSON("php/getPointData.php", function (data) {
 map = new L.Map("map",{
    center: [57.051111, 9.919444],
    zoom: 13,
-   layers: [osm, riskByg]
+   layers: [osm, riskByg, enheds]
  });
